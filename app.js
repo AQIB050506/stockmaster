@@ -106,7 +106,7 @@ io.on('connection', (socket) => {
 // Make io available to routes
 app.set('io', io);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Connect to database, then start server
 connectDB().then(() => {
