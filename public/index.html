@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional Inventory Management System with Offline Support">
+    <meta name="theme-color" content="#3b82f6">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="StockMaster">
+    
+    <title>StockMaster - Inventory Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Add QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-wrapper">
+            <!-- Left Panel - Login Form (40%) -->
+            <div class="login-form-panel">
+                <div class="login-form-container">
+                    <div class="login-brand">
+                        <div class="logo-icon-animated">📦</div>
+                        <h1 class="brand-name">StockMaster</h1>
+                    </div>
+                    
+                    <div class="welcome-section">
+                        <h2 class="welcome-title">WELCOME BACK</h2>
+                        <p class="welcome-subtitle">Sign in to continue to your inventory</p>
+                    </div>
+                    
+                    <div class="signup-link-top">
+                        Don't have an account? <a href="#" onclick="showRegister(event)" class="signup-link">Signup</a>
+                    </div>
+                    
+                    <!-- Social Login (Optional) -->
+                    <button type="button" class="btn-apple" onclick="handleAppleLogin()">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                            <path d="M13.5 1.5c-.3 0-.6.1-.8.3-.2.2-.3.5-.3.8 0 .3.1.6.3.8.2.2.5.3.8.3.3 0 .6-.1.8-.3.2-.2.3-.5.3-.8 0-.3-.1-.6-.3-.8-.2-.2-.5-.3-.8-.3zM12 5.5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-4z"/>
+                        </svg>
+                        Sign in with Apple
+                    </button>
+                    
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+                    
+                    <form id="loginForm" onsubmit="handleLogin(event); return false;" novalidate>
+                        <div class="form-group-modern">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label for="loginPassword">Password</label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                                    <span class="eye-icon">👁️</span>
+                                    <span class="eye-text">Hide</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="forgot-password">
+                            <a href="#" onclick="handleForgotPassword(event)">Forget your password?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn-login-primary">
+                            <span>Login</span>
+                            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </form>
+                    
+                    <form id="registerForm" class="hidden" onsubmit="handleRegister(event); return false;" novalidate>
+                        <h2 class="form-title">Create Account</h2>
+                        <div class="form-group-modern">
+                            <label for="registerName">Name</label>
+                            <input type="text" id="registerName" placeholder="Enter your name" required>
+                        </div>
+                        <div class="form-group-modern">
+                            <label for="registerEmail">Email</label>
+                            <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group-modern">
+                            <label for="registerPassword">Password</label>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="registerPassword" placeholder="Enter your password" required>
+                                <button type="button" class="password-toggle" onclick="togglePassword('registerPassword')">
+                                    <span class="eye-icon">👁️</span>
+                                    <span class="eye-text">Hide</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group-modern">
+                            <label for="registerRole">Role</label>
+                            <select id="registerRole" required>
+                                <option value="">Select a role</option>
+                                <option value="inventory_manager">Inventory Manager</option>
+                                <option value="warehouse_staff">Warehouse Staff</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-login-primary">
+                            <span>Register</span>
+                            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <p class="switch-form">
+                            Already have an account? <a href="#" onclick="showLogin(event)" class="signup-link">Login</a>
+                        </p>
+                    </form>
+                    
+                    <div id="loginError" class="error-message-modern hidden"></div>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Illustration (60%) -->
+            <div class="login-illustration-panel">
+                <div class="warehouse-illustration">
+                    <!-- Animated Warehouse Scene -->
+                    <div class="warehouse-scene">
+                        <!-- Buildings -->
+                        <div class="building building-1"></div>
+                        <div class="building building-2"></div>
+                        <div class="building building-3"></div>
+                        
+                        <!-- Warehouse Interior -->
+                        <div class="warehouse-interior">
+                            <div class="shelf shelf-1"></div>
+                            <div class="shelf shelf-2"></div>
+                            <div class="shelf shelf-3"></div>
+                            <div class="box box-1"></div>
+                            <div class="box box-2"></div>
+                            <div class="box box-3"></div>
+                            <div class="box box-4"></div>
+                            <div class="agv"></div>
+                        </div>
+                        
+                        <!-- Trucks -->
+                        <div class="truck truck-1">
+                            <div class="truck-cab"></div>
+                            <div class="truck-body"></div>
+                        </div>
+                        <div class="truck truck-2">
+                            <div class="truck-cab"></div>
+                            <div class="truck-body"></div>
+                        </div>
+                        
+                        <!-- Road -->
+                        <div class="road"></div>
+                        
+                        <!-- Markers/Pillars -->
+                        <div class="pillar pillar-1"></div>
+                        <div class="pillar pillar-2"></div>
+                        <div class="pillar pillar-3"></div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="floating-elements">
+                        <div class="float-item float-1">📦</div>
+                        <div class="float-item float-2">🚚</div>
+                        <div class="float-item float-3">📊</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="appPage" class="page">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            ☰
+        </button>
+        
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu()"></div>
+        
+        <!-- Sidebar Navigation -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="sidebar-logo-icon">📦</span>
+                    <h2>StockMaster</h2>
+                </div>
+            </div>
+            
+            <!-- Add this offline status indicator -->
+            <div id="offlineStatus" style="display: none; padding: 8px 16px; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; margin: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 500;">
+                <span style="color: #ef4444;">● Offline</span>
+            </div>
+            
+            <!-- Pending sync count badge -->
+            <div id="pendingSyncBadge" style="display: none; padding: 8px 16px; margin: 8px 16px; background: rgba(245, 158, 11, 0.1); border-left: 3px solid #f59e0b; border-radius: 4px; font-size: 12px; cursor: pointer;" onclick="offlineManager.manualSync()">
+                <span style="color: #f59e0b;">⏳ <span id="pendingSyncCount">0</span> pending sync</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" onclick="showDashboard(); return false;" class="nav-item active" data-page="dashboard">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#" onclick="showProducts(); return false;" class="nav-item" data-page="products">
+                    <span>📦</span> Products
+                </a>
+                <a href="#" onclick="showWarehouses(); return false;" class="nav-item" data-page="warehouses">
+                    <span>🏢</span> Warehouses
+                </a>
+                <a href="#" onclick="showReceipts(); return false;" class="nav-item" data-page="receipts">
+                    <span>📥</span> Receipts
+                </a>
+                <a href="#" onclick="showDeliveries(); return false;" class="nav-item" data-page="deliveries">
+                    <span>📤</span> Deliveries
+                </a>
+                <a href="#" onclick="showTransfers(); return false;" class="nav-item" data-page="transfers">
+                    <span>🔄</span> Internal Transfers
+                </a>
+                <a href="#" onclick="showAdjustments(); return false;" class="nav-item" data-page="adjustments">
+                    <span>⚙️</span> Stock Adjustments
+                </a>
+                <a href="#" onclick="showMoveHistory(); return false;" class="nav-item" data-page="moveHistory">
+                    <span>📦</span> Move History
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span id="userName">User</span>
+                    <span id="userRole" class="role-badge">Manager</span>
+                </div>
+                <button onclick="handleLogout()" class="btn btn-danger btn-sm">Logout</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="content-page active">
+                <div class="page-header">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p style="color: var(--text-light); font-size: 14px; margin-top: 4px;">Real-time inventory overview</p>
+                    </div>
+                    <!-- Remove Seed Data and Export buttons -->
+                </div>
+                
+                <!-- Quick Search -->
+                <div class="search-bar-modern">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <input type="text" id="globalSearch" placeholder="🔍 Search products, SKU, warehouses..." 
+                               style="flex: 1; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 14px;"
+                               onkeyup="handleGlobalSearch(event)">
+                        <select id="filterCategory" onchange="applyFilters()" 
+                                style="padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 14px; background: white;">
+                            <option value="">All Categories</option>
+                        </select>
+                        <button onclick="clearSearch()" class="btn btn-sm" style="background: var(--text-light); color: white;">Clear</button>
+                    </div>
+                </div>
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon">📦</div>
+                        <div class="kpi-content">
+                            <h3>Total Products</h3>
+                            <p class="kpi-value" id="kpiTotalProducts">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card warning">
+                        <div class="kpi-icon">⚠️</div>
+                        <div class="kpi-content">
+                            <h3>Low Stock Items</h3>
+                            <p class="kpi-value" id="kpiLowStock">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card danger">
+                        <div class="kpi-icon">❌</div>
+                        <div class="kpi-content">
+                            <h3>Out of Stock</h3>
+                            <p class="kpi-value" id="kpiOutOfStock">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card info">
+                        <div class="kpi-icon">📥</div>
+                        <div class="kpi-content">
+                            <h3>Pending Receipts</h3>
+                            <p class="kpi-value" id="kpiPendingReceipts">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card info">
+                        <div class="kpi-icon">📤</div>
+                        <div class="kpi-content">
+                            <h3>Pending Deliveries</h3>
+                            <p class="kpi-value" id="kpiPendingDeliveries">0</p>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon">🏢</div>
+                        <div class="kpi-content">
+                            <h3>Warehouses</h3>
+                            <p class="kpi-value" id="kpiWarehouses">0</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Analytics Row -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px;">
+                    <!-- Stock Value Chart -->
+                    <div class="modern-card">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text-dark);">Stock Value by Category</h3>
+                        <div id="stockValueChart">
+                            <p class="loading">Loading...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="modern-card">
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--text-dark);">Quick Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button onclick="showAddProduct()" class="quick-action-btn">
+                                <span>➕</span> Add Product
+                            </button>
+                            <button onclick="showAddReceipt()" class="quick-action-btn">
+                                <span>📥</span> New Receipt
+                            </button>
+                            <button onclick="showAddWarehouse()" class="quick-action-btn">
+                                <span>🏢</span> Add Warehouse
+                            </button>
+                            <button onclick="window.print()" class="quick-action-btn">
+                                <span>🖨️</span> Print Report
+                            </button>
+                        </div>
+                        <!-- Remove the small buttons section (lines 236-243) -->
+                    </div>
+                </div>
+                
+                <!-- Inventory Valuation -->
+                <div style="background: linear-gradient(135deg, var(--zoho-blue) 0%, var(--zoho-blue-light) 100%); padding: 20px; border-radius: var(--radius-md); margin-bottom: 24px; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 500; margin-bottom: 4px; opacity: 0.9;">Total Inventory Value</h3>
+                            <p id="totalInventoryValue" style="font-size: 32px; font-weight: 700; margin: 0;">₹0</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <h3 style="font-size: 14px; font-weight: 500; margin-bottom: 4px; opacity: 0.9;">Potential Revenue</h3>
+                            <p id="potentialRevenue" style="font-size: 32px; font-weight: 700; margin: 0;">₹0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 style="margin: 0;">Recent Transactions</h2>
+                        <button onclick="showAllTransactions()" class="btn btn-sm" style="background: var(--zoho-blue); color: white;">View All</button>
+                    </div>
+                    <div id="recentTransactions" class="table-container">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 style="margin: 0;">Low Stock Summary</h2>
+                    </div>
+                    <div id="lowStockSummary" class="table-container">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+                <!-- Add this section after the Low Stock Summary section (around line 247) -->
+                <div class="dashboard-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 style="margin: 0;">🤖 AI-Powered Demand Forecast</h2>
+                        <span style="font-size: 12px; color: var(--text-light);">Predictive analytics</span>
+                    </div>
+                    <div id="demandForecasts" class="table-container">
+                        <p class="loading">Loading forecasts...</p>
+                    </div>
+                </div>
+                <!-- AI Insights Kanban View -->
+                <div class="dashboard-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h2 style="margin: 0;">📊 AI Insights Kanban</h2>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button onclick="switchView('table')" id="viewTableBtn" class="btn btn-sm" style="background: var(--zoho-blue); color: white;">
+                                📋 Table
+                            </button>
+                            <button onclick="switchView('kanban')" id="viewKanbanBtn" class="btn btn-sm" style="background: var(--text-light); color: white;">
+                                📊 Kanban
+                            </button>
+                            <button onclick="showColorSettings()" class="btn btn-sm" style="background: #10b981; color: white;">
+                                🎨 Colors
+                            </button>
+                            <button onclick="printAIInsights()" class="btn btn-sm" style="background: #f59e0b; color: white;">
+                                🖨️ Print
+                            </button>
+                        </div>
+                    </div>
+                    <div id="aiInsightsView">
+                        <!-- Content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Page -->
+            <div id="productsPage" class="content-page">
+                <div class="page-header">
+                    <div>
+                        <h1>Products</h1>
+                        <p style="color: var(--text-light); font-size: 14px; margin-top: 4px;" id="productsCount">0 products</p>
+                    </div>
+                    <button onclick="showAddProduct()" class="btn btn-primary">+ Add Product</button>
+                </div>
+                <div style="background: white; padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px; border: 1px solid var(--border-light);">
+                    <input type="text" id="productSearch" placeholder="🔍 Search products by name, SKU, or category..." 
+                           style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 14px;"
+                           onkeyup="filterProducts()">
+                </div>
+                <div class="table-container">
+                    <div id="productsList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warehouses Page -->
+            <div id="warehousesPage" class="content-page">
+                <div class="page-header">
+                    <div>
+                        <h1>Warehouses</h1>
+                        <p style="color: var(--text-light); font-size: 14px; margin-top: 4px;" id="warehousesCount">0 warehouses</p>
+                    </div>
+                    <button onclick="showAddWarehouse()" class="btn btn-primary">+ Add Warehouse</button>
+                </div>
+                <div style="background: white; padding: 16px; border-radius: var(--radius-md); margin-bottom: 20px; border: 1px solid var(--border-light);">
+                    <input type="text" id="warehouseSearch" placeholder="🔍 Search warehouses by name, code, city..." 
+                           style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 14px;"
+                           onkeyup="filterWarehouses()">
+                </div>
+                <div class="table-container">
+                    <div id="warehousesList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receipts Page -->
+            <div id="receiptsPage" class="content-page">
+                <div class="page-header">
+                    <h1>Receipts</h1>
+                    <button onclick="showAddReceipt()" class="btn btn-primary">+ Add Receipt</button>
+                </div>
+                <div class="table-container">
+                    <div id="receiptsList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deliveries Page -->
+            <div id="deliveriesPage" class="content-page">
+                <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Deliveries</h1>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <!-- Search Bar -->
+                        <input type="text" id="deliverySearch" placeholder="🔍 Search by reference, customer..." 
+                               style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; width: 250px;"
+                               onkeyup="filterDeliveries()">
+                        <button onclick="showAddReceipt('delivery')" class="btn btn-primary">+ Add Delivery</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div id="deliveriesList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transfers Page -->
+            <div id="transfersPage" class="content-page">
+                <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Internal Transfers</h1>
+                    <button onclick="showAddReceipt('transfer')" class="btn btn-primary">+ Add Transfer</button>
+                </div>
+                <div class="table-container">
+                    <div id="transfersList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adjustments Page -->
+            <div id="adjustmentsPage" class="content-page">
+                <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Stock Adjustments</h1>
+                    <button onclick="showAddReceipt('adjustment')" class="btn btn-primary">+ Add Adjustment</button>
+                </div>
+                <div class="table-container">
+                    <div id="adjustmentsList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Move History Page -->
+            <div id="moveHistoryPage" class="content-page">
+                <div class="page-header">
+                    <h1>📦 Move History</h1>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="moveHistorySearch" placeholder="🔍 Search..." 
+                               style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px; width: 250px;"
+                               onkeyup="filterMoveHistory()">
+                        <select id="moveHistoryFilter" onchange="filterMoveHistory()" 
+                                style="padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px;">
+                            <option value="all">All Movements</option>
+                            <option value="in">Stock In</option>
+                            <option value="out">Stock Out</option>
+                            <option value="transfer">Transfers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div id="moveHistoryList">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Form Modal -->
+    <div id="receiptModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 id="receiptModalTitle">📥 Create New Receipt</h2>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <span id="receiptStatus" style="padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; background: #f3f4f6; color: #6b7280;">
+                            Draft
+                        </span>
+                        <span style="color: var(--text-light); font-size: 12px;">Draft > Ready > Done</span>
+                    </div>
+                </div>
+                <span class="close-modal" onclick="closeReceiptModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Action Buttons -->
+                <div style="display: flex; gap: 8px; margin-bottom: 20px; justify-content: flex-end;">
+                    <button onclick="validateReceipt()" id="validateBtn" class="btn" style="background: #10b981; color: white;">
+                        To DO
+                    </button>
+                    <button onclick="printReceipt()" class="btn" style="background: #3b82f6; color: white;">
+                        🖨️ Print
+                    </button>
+                    <button onclick="downloadReceipt()" class="btn" style="background: #f59e0b; color: white;">
+                        📥 Download
+                    </button>
+                    <button onclick="closeReceiptModal()" class="btn" style="background: var(--text-light); color: white;">
+                        Cancel
+                    </button>
+                </div>
+
+                <!-- Receipt Reference -->
+                <div style="background: #f3f4f6; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                    <strong>Reference:</strong> <span id="receiptReference">WH/IN/0001</span>
+                </div>
+
+                <!-- Document Scanner Section -->
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 8px; margin-bottom: 20px; color: white;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 18px;">📄 Smart Document Scanner</h3>
+                    <p style="margin: 0 0 16px 0; opacity: 0.9; font-size: 14px;">
+                        Upload invoice, GRN slip, scan QR code, or use camera
+                    </p>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <label for="documentUpload" class="btn" style="background: white; color: #667eea; cursor: pointer; margin: 0;">
+                            📷 Choose Document
+                        </label>
+                        <input type="file" id="documentUpload" accept="image/*" style="display: none;" onchange="handleDocumentUpload(event)">
+                        <button onclick="startCameraScan()" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid white;">
+                            📸 Use Camera
+                        </button>
+                        <button onclick="startQRScanner('receipt')" class="btn" style="background: rgba(16, 185, 129, 0.3); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                            📱 Scan QR Code
+                        </button>
+                        <button onclick="loadDemoInvoiceData()" class="btn" style="background: rgba(16, 185, 129, 0.3); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                            🧪 Try Demo Data
+                        </button>
+                        <!-- Add QR Scanner container -->
+                        <div id="qrScannerReceipt" style="display: none; width: 100%; margin-top: 12px;">
+                            <div id="qr-reader-receipt" style="width: 100%;"></div>
+                        </div>
+                        <div id="ocrProgress" style="display: none; flex: 1; min-width: 200px;">
+                            <div style="background: rgba(255,255,255,0.2); border-radius: 4px; padding: 8px;">
+                                <div id="ocrProgressBar" style="background: white; height: 4px; border-radius: 2px; width: 0%; transition: width 0.3s;"></div>
+                                <p style="margin: 4px 0 0 0; font-size: 12px;">Processing document...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="scannedPreview" style="margin-top: 16px; display: none;">
+                        <img id="scannedImage" src="" alt="Scanned document" style="max-width: 100%; max-height: 200px; border-radius: 4px; border: 2px solid white;">
+                    </div>
+                </div>
+
+                <!-- Receipt Form -->
+                <form id="receiptForm" onsubmit="submitReceipt(event); return false;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Receive From / Supplier *</label>
+                            <input type="text" id="receiptSupplier" placeholder="Supplier name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Responsible *</label>
+                            <input type="text" id="receiptResponsible" placeholder="Responsible person" required readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label>Schedule Date</label>
+                        <input type="date" id="receiptScheduleDate">
+                    </div>
+
+                    <!-- Items Section -->
+                    <div style="margin-top: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h3 style="margin: 0;">Items</h3>
+                            <button type="button" onclick="addReceiptItem()" class="btn btn-sm" style="background: var(--zoho-blue); color: white;">
+                                + Add Item
+                            </button>
+                        </div>
+                        <div id="receiptItemsList" style="display: flex; flex-direction: column; gap: 12px;">
+                            <!-- Items will be added here dynamically -->
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
+                        <button type="button" onclick="saveReceiptDraft()" class="btn" style="background: #6b7280; color: white;">
+                            💾 Save Draft
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Create Receipt
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div id="cameraModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📸 Camera Scanner</h2>
+                <span class="close-modal" onclick="closeCameraModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <video id="cameraVideo" autoplay playsinline style="width: 100%; border-radius: 8px; margin-bottom: 16px;"></video>
+                <canvas id="cameraCanvas" style="display: none;"></canvas>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    <button onclick="capturePhoto()" class="btn btn-primary">📷 Capture</button>
+                    <button onclick="closeCameraModal()" class="btn" style="background: var(--text-light); color: white;">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Form Modal -->
+    <div id="productModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>📦 Add New Product</h2>
+                <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- QR Code Scanner Section -->
+                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; border-radius: 8px; margin-bottom: 20px; color: white;">
+                    <h3 style="margin: 0 0 12px 0; font-size: 18px;">📱 Scan QR Code</h3>
+                    <p style="margin: 0 0 16px 0; opacity: 0.9; font-size: 14px;">
+                        Scan product QR code to auto-fill product details
+                    </p>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <button onclick="startQRScanner('product')" class="btn" style="background: white; color: #10b981; border: none;">
+                            📷 Scan QR Code
+                        </button>
+                        <div id="qrScannerProduct" style="display: none; flex: 1;">
+                            <div id="qr-reader-product" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="productForm" onsubmit="submitProduct(event); return false;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="productName" required placeholder="Enter product name">
+                        </div>
+                        <div class="form-group">
+                            <label>SKU *</label>
+                            <input type="text" id="productSku" required placeholder="PROD-001" style="text-transform: uppercase;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <input type="text" id="productCategory" required placeholder="e.g., Raw Materials, Furniture">
+                        </div>
+                        <div class="form-group">
+                            <label>Unit of Measure *</label>
+                            <select id="productUnit" required>
+                                <option value="">Select unit</option>
+                                <option value="kg">kg</option>
+                                <option value="pcs">pcs</option>
+                                <option value="liters">liters</option>
+                                <option value="boxes">boxes</option>
+                                <option value="units">units</option>
+                                <option value="meters">meters</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Cost Price</label>
+                            <input type="number" id="productCostPrice" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Selling Price</label>
+                            <input type="number" id="productSellingPrice" min="0" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Min Stock Level</label>
+                            <input type="number" id="productMinStock" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Stock Level</label>
+                            <input type="number" id="productMaxStock" min="0" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="productDescription" rows="3" placeholder="Product description..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
+                        <button type="button" onclick="closeProductModal()" class="btn" style="background: var(--text-light); color: white;">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Create Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warehouse Form Modal -->
+    <div id="warehouseModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>🏢 Add New Warehouse</h2>
+                <span class="close-modal" onclick="closeWarehouseModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="warehouseForm" onsubmit="submitWarehouse(event); return false;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Warehouse Name *</label>
+                            <input type="text" id="warehouseName" required placeholder="Enter warehouse name">
+                        </div>
+                        <div class="form-group">
+                            <label>Warehouse Code *</label>
+                            <input type="text" id="warehouseCode" required placeholder="WH001" style="text-transform: uppercase;">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Street Address</label>
+                        <input type="text" id="warehouseStreet" placeholder="Street address">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>City *</label>
+                            <input type="text" id="warehouseCity" required placeholder="City">
+                        </div>
+                        <div class="form-group">
+                            <label>State *</label>
+                            <input type="text" id="warehouseState" required placeholder="State">
+                        </div>
+                        <div class="form-group">
+                            <label>Zip Code</label>
+                            <input type="text" id="warehouseZip" placeholder="Zip code">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div class="form-group">
+                            <label>Contact Person Name</label>
+                            <input type="text" id="warehouseContactName" placeholder="Contact name">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Phone</label>
+                            <input type="text" id="warehouseContactPhone" placeholder="+91-9876543210">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" id="warehouseContactEmail" placeholder="contact@warehouse.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Capacity</label>
+                        <input type="number" id="warehouseCapacity" min="0" placeholder="Total capacity">
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
+                        <button type="button" onclick="closeWarehouseModal()" class="btn" style="background: var(--text-light); color: white;">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Create Warehouse
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product View Modal -->
+    <div id="productViewModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>📦 Product Details</h2>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="printProductDetails()" class="btn btn-sm" style="background: #3b82f6; color: white;">
+                        🖨️ Print
+                    </button>
+                    <span class="close-modal" onclick="closeProductViewModal()">&times;</span>
+                </div>
+            </div>
+            <div class="modal-body" id="productViewContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="offlineManager.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('[SW] Service Worker registered:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('[SW] New service worker available');
+                                    // Optionally show update notification
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('[SW] Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // Listen for service worker messages
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'TRIGGER_SYNC') {
+                    if (typeof offlineManager !== 'undefined') {
+                        offlineManager.syncPendingTransactions();
+                    }
+                }
+            });
+        }
+
+        // Periodic sync check (every 30 seconds when online)
+        setInterval(() => {
+            if (navigator.onLine && typeof offlineManager !== 'undefined') {
+                offlineManager.syncPendingTransactions();
+            }
+        }, 30000);
+    </script>
+
+    <!-- Receipt View Modal -->
+    <div id="receiptViewModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>📥 Receipt Details</h2>
+                <span class="close-modal" onclick="closeReceiptViewModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="receiptViewContent">
+                <p class="loading">Loading receipt details...</p>
+            </div>
+            <div class="modal-footer" style="padding: 16px; border-top: 1px solid var(--border-light); display: flex; gap: 8px; justify-content: flex-end;">
+                <button onclick="printReceiptView()" class="btn" style="background: #3b82f6; color: white;">
+                    🖨️ Print Receipt
+                </button>
+                <button onclick="closeReceiptViewModal()" class="btn" style="background: var(--text-light); color: white;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
